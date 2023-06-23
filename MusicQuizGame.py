@@ -18,12 +18,9 @@ line = 0
 
 def MakeUser():
     pwdPassed = False
-    with open('Users.csv', 'a', newline='', encoding="UTF8"
-              ) as file:  # This opens up the Users file in append mode
+    with open('Users.csv', 'a', newline='', encoding="UTF8") as file:  # This opens up the Users file in append mode
         writer = csv.writer(file)  # Assigns a writer object to an variable
-        user = tInput(
-            "\033[0;37;40mPlease make a new user to continue.\nFirst, enter a username: "
-        )
+        user = tInput("\033[0;37;40mPlease make a new user to continue.\nFirst, enter a username: ")
         while not pwdPassed:  # While the passwords do not match
             password = tInput("\033[0;37;40mPlease enter a new password: ")
             pwdCheck = tInput("Please re-enter the password: ")
@@ -75,18 +72,15 @@ def Authentication():
 def Save():
     global points
     fileLines = 0
-    with open('Users.csv', 'r', newline='', encoding="UTF8"
-              ) as file:  # This opens up the Users file in read mode
+    with open('Users.csv', 'r', newline='', encoding="UTF8") as file:  # This opens up the Users file in read mode
         reader = csv.reader(file)
         fileLines = list(reader)  # Makes the reader into a list
         tPrint("\033[0;37;40mSaving...")
         if int(fileLines[line][0]) < points:  # checks if the points are higher than the score in the file
             fileLines[line][0] = points
-    with open('Users.csv', 'w', newline='', encoding="UTF8"
-              ) as file:  # This opens up the Users file in write mode
+    with open('Users.csv', 'w', newline='', encoding="UTF8") as file:  # This opens up the Users file in write mode
         writer = csv.writer(file)
-        writer.writerows(
-            fileLines)  # Clears the file and writes in the edited data
+        writer.writerows(fileLines)  # Clears the file and writes in the edited data
     time.sleep(0.5)
     tPrint("Saved")
     time.sleep(0.5)
@@ -153,10 +147,8 @@ def SongSelection():
     song = linesSplit[1]  # Assigns the second half to song
     sShow = song.split()  # Splits the song into each of the words
     song = linesSplit[1]  # Reassigns song so that it isn't split
-    song = song[:len(song) -
-                1]  # Cuts the song name to remove the new line escape character
-    sShow = ListFirstLetter(
-        sShow)  # Reduces each word to the first letter of each one
+    song = song[:len(song) -1]  # Cuts the song name to remove the new line escape character
+    sShow = ListFirstLetter(sShow)  # Reduces each word to the first letter of each one
     return artist, sShow, song
 
 
