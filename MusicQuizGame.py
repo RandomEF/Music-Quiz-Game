@@ -12,6 +12,8 @@ global row
 row = 0
 global line
 line = 0
+global genreSelection
+genreSelection = 0
 
 # print("\033[0;37;40mTest") The beginning escape sequence changes the colour of the text
 
@@ -137,8 +139,28 @@ def LetterOnly(letters):
     return word
 
 
+def GenreSelection(changeSelection = 1):
+    if genre == 0 or changeSelection == 1:
+        print("Genres:\n1. Pop")
+        genreSelection = int(input("Select the genre: "))
+    match genreSelection:
+        case 1:
+            genre = "Pop.txt"
+        case _:
+            raise Exception("That selection does not exist.")
+    return genre
+
+
 def SongSelection():
-    f = open("DictOfSongs.txt","r")  #this document 'dictofsongs'is saved into the variable 'f'
+    if genreSelection == 0:
+        genre = GenreSelection()
+    else:
+        selection = input("Do you want to change the genre? (Y/N): ")
+        if selection[0].upper == "Y":
+            genre = GenreSelection(0)
+        else:
+            genre = GenreSelection()
+    f = open(genre,"r")  #this document 'dictofsongs'is saved into the variable 'f'
     linez = f.readlines()  # takes all items from the document and puts it into a list
     index = random.randint(0,len(linez) -3)  # Randomly selects an index in the song
     line = linez[index]
