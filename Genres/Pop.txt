@@ -1,5 +1,9 @@
+Adele:Skyfall
 Bruno Mars:The Lazy Song
 Cody Simpson:La Da Dee
+Conan Gray:Heather
+Conan Gray:Maniac
+Coyote Theory:This Side Of Paradise
 Drake:God's Plan
 Ed Sheeran:Shape Of You
 Ed Sheeran:Bad Habits
@@ -17,6 +21,7 @@ Katy Perry:Firework
 KSI:Not Over Yet
 Lil Nas X:Call Me By Your Name
 Lil Nas X:Industry Baby
+Magic:RUDE
 Maroon 5:Girls Like You
 Maroon 5:Sugar
 One Direction:Story Of My Life
@@ -25,10 +30,17 @@ One Direction:Best Song Ever
 One Direction:Night Changes
 One Direction:18
 One Direction:Drag Me Down
+Panic At The Disco!:High Hopes
 powfu ft. beabadobee:Death Bed
 Shawn Mendes:Treat You Better
 The Kid Laroi ft. Justin Bieber:Stay
+The Vamps ft. Demi Lovato:Somebody To You
+The Vamps:Wake Up
+The Vamps, Matoma:All Night
 Trevor Daniel:Falling
+twenty one pilots:Ride
+twenty one pilots:Stressed Out
+24kgoldn ft iann dior:Mood
 347Aiden: Memories
 [Artist:Song(NO COLONS)]
 [End Of File]
