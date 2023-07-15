@@ -12,18 +12,22 @@ global row
 row = 0
 global line
 line = 0
+global genreSelection
+genreSelection = 0
+global genre
+genre = 0
 
 # print("\033[0;37;40mTest") The beginning escape sequence changes the colour of the text
 
 
 def MakeUser():
+    '''
+    Creates a new user
+    '''
     pwdPassed = False
-    with open('Users.csv', 'a', newline='', encoding="UTF8"
-              ) as file:  # This opens up the Users file in append mode
+    with open('Users.csv', 'a', newline='', encoding="UTF8") as file:  # This opens up the Users file in append mode
         writer = csv.writer(file)  # Assigns a writer object to an variable
-        user = tInput(
-            "\033[0;37;40mPlease make a new user to continue.\nFirst, enter a username: "
-        )
+        user = tInput("\033[0;37;40mPlease make a new user to continue.\nFirst, enter a username: ")
         while not pwdPassed:  # While the passwords do not match
             password = tInput("\033[0;37;40mPlease enter a new password: ")
             pwdCheck = tInput("Please re-enter the password: ")
@@ -38,6 +42,9 @@ def MakeUser():
 
 
 def Authentication():
+    '''
+    Checks that the user is registered and if not, registers them
+    '''
     with open('Users.csv', newline='', encoding="UTF8") as file:  # This opens up the Users file in read mode
         reader = csv.reader(file)  # Assigns the file reader to a variable
         passed = False
@@ -73,26 +80,29 @@ def Authentication():
 
 
 def Save():
+    '''
+    Saves the user's score if it is a new highscore
+    '''
     global points
     fileLines = 0
-    with open('Users.csv', 'r', newline='', encoding="UTF8"
-              ) as file:  # This opens up the Users file in read mode
+    with open('Users.csv', 'r', newline='', encoding="UTF8") as file:  # This opens up the Users file in read mode
         reader = csv.reader(file)
         fileLines = list(reader)  # Makes the reader into a list
         tPrint("\033[0;37;40mSaving...")
         if int(fileLines[line][0]) < points:  # checks if the points are higher than the score in the file
             fileLines[line][0] = points
-    with open('Users.csv', 'w', newline='', encoding="UTF8"
-              ) as file:  # This opens up the Users file in write mode
+    with open('Users.csv', 'w', newline='', encoding="UTF8") as file:  # This opens up the Users file in write mode
         writer = csv.writer(file)
-        writer.writerows(
-            fileLines)  # Clears the file and writes in the edited data
+        writer.writerows(fileLines)  # Clears the file and writes in the edited data
     time.sleep(0.5)
     tPrint("Saved")
     time.sleep(0.5)
 
 
 def HighScores():
+    '''
+    Displays the top 5 scores
+    '''
     with open("Users.csv", "r", newline='', encoding="UTF8") as file:  # This opens up the Users file in read mode
         reader = csv.reader(file)
         scoresList = []
@@ -111,7 +121,10 @@ def HighScores():
                 x-=1
 
 
-def ListFirstLetter(list):  #stores the first letter of a word in a list into a variable called 'list'
+def ListFirstLetter(list):
+    '''
+    Stores the first letter of a word in a list
+    '''
     x = 0
     for index in list:
         temp = index
@@ -121,12 +134,18 @@ def ListFirstLetter(list):  #stores the first letter of a word in a list into a 
     return list
 
 
-def FirstLetter(word):  #stores the first letter of a word into a variable called 'word'
+def FirstLetter(word):
+    '''
+    Returns the first letter of the word
+    '''
     word = word[0]  # Sets word to the first letter
     return word
 
 
 def LetterOnly(letters):
+    '''
+    Isolates the string so that only the letters remain
+    '''
     x = 0
     word = ''
     for index in letters:
@@ -143,8 +162,41 @@ def LetterOnly(letters):
     return word
 
 
+def GenreSelection(changeSelection = 1):
+    '''
+    Allows the selected genre to be changed
+    '''
+    global genre
+    genreList = ["Disco.txt", "Electronic Dance.txt", "Folk.txt", "Indie.txt", "Metal.txt", "Pop.txt", "Punk.txt", "Rap.txt", "Rock.txt", "Video Game.txt"]
+    if changeSelection == 0:
+        return genre
+    passed = False
+    while not passed:
+        choice = int(input("Your options are:\n1. Disco\n2. Electronic Dance\n3. Folk\n4. Indie\n5. Metal\n6. Pop\n7. Punk\n8. Rap\n9. Rock\n10. Video Game\n0. Random:"))
+        if choice > len(genreList) or choice < 0:
+            print("That was not an option.")
+            continue
+        elif choice == 0:
+            choice = random.randint(1, len(genreList) + 1)
+        genre = genreList[choice - 1]
+        passed = True
+    return genre
+
+
 def SongSelection():
-    f = open("DictOfSongs.txt","r")  #this document 'dictofsongs'is saved into the variable 'f'
+    '''
+    Selects a random song within the genre
+    '''
+    global genre
+    if genre == 0:
+        genre = GenreSelection()
+    else:
+        selection = input("Do you want to change the genre? (Y/N): ")
+        if selection[0].lower() == 'y':
+            genre = GenreSelection(1)
+        else:
+            genre = GenreSelection(0)
+    f = open("Genres\\" + genre,"r")  #this selected genre document is saved into the variable 'f'
     linez = f.readlines()  # takes all items from the document and puts it into a list
     index = random.randint(0,len(linez) -3)  # Randomly selects an index in the song
     line = linez[index]
@@ -153,15 +205,16 @@ def SongSelection():
     song = linesSplit[1]  # Assigns the second half to song
     sShow = song.split()  # Splits the song into each of the words
     song = linesSplit[1]  # Reassigns song so that it isn't split
-    song = song[:len(song) -
-                1]  # Cuts the song name to remove the new line escape character
-    sShow = ListFirstLetter(
-        sShow)  # Reduces each word to the first letter of each one
+    song = song[:len(song) -1]  # Cuts the song name to remove the new line escape character
+    sShow = ListFirstLetter(sShow)  # Reduces each word to the first letter of each one
     return artist, sShow, song
 
 
 def AskSong():
-    os.system("clear")  # Clears the screen
+    '''
+    The main game loop
+    '''
+    os.system("cls")  # Clears the screen
     global streak  # References the global variables
     global points
     chances = 2
@@ -209,6 +262,9 @@ def AskSong():
 
 
 def Replay():
+    '''
+    If the game ends, asks if the player wants to play again
+    '''
     guess = tInput("Want to play again?: ")
     guess = guess.lower()  # Sets the guess to lowercase
     if guess[0] == "y":
@@ -220,6 +276,9 @@ def Replay():
 
 
 def Rules():
+    '''
+    Displays the rules
+    '''
     tPrint("\033[1;33;40mBy Eshan Fadi ft Arul Batra\n")
     time.sleep(1)
     tPrint("\033[0;37;40mFor a selected song, the artist and the song's initials will show.")
@@ -228,27 +287,33 @@ def Rules():
     time.sleep(1)
     tPrint("However, you get 2 chances for each song and making a mistake breaks your streak.")
     time.sleep(1)
-    tPrint("Making 2 mistakes results in a game over")
+    tPrint("Making 2 mistakes results in a game over.")
 
 
 def Menu():
-	selection = -1
-	while selection != 0:  # While the selection is not quit
-		selection = tIntInput("\033[0;37;40m1. Play a new game of Music Guess\n2. Display Highscores\n3.Rules\n0. Exit\n")
-		if selection == 1:
-			Authentication()
-			AskSong()
-		elif selection == 2:
-			HighScores()
-		elif selection == 3:
-			Rules()
-			tInput("Please press any key to continue...")
-		else:
-			tPrint("That was not an option.\n")
-	quit()
+    '''
+    The beginning menu system
+    '''
+    selection = -1
+    while selection != 0:  # While the selection is not quit
+        selection = tIntInput("\033[0;37;40m1. Play a new game of Music Guess\n2. Display Highscores\n3. Rules\n0. Exit\n")
+        if selection == 1:
+            Authentication()
+            AskSong()
+        elif selection == 2:
+            HighScores()
+        elif selection == 3:
+            Rules()
+            tInput("Please press any key to continue...")
+        else:
+            tPrint("That was not an option.\n")
+    quit()
 
 
-def InsertionSort(list):  # Does Insertion Sort
+def InsertionSort(list):
+    '''
+    Insertion Sort
+    '''
     for i in range(1, len(list)):
         save = list[i]
         pos = i - 1
@@ -256,3 +321,6 @@ def InsertionSort(list):  # Does Insertion Sort
             list[pos + 1] = list[pos]
             pos -= 1
         list[pos + 1] = save
+
+if __name__ == "__main__":
+    SongSelection
