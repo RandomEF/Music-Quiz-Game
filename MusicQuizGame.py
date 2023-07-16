@@ -16,18 +16,26 @@ global genreSelection
 genreSelection = 0
 global genre
 genre = 0
+global userMode
+userMode = False # False is guest, True is signed in
+global randomFlag
+randomFlag = False
 
 # print("\033[0;37;40mTest") The beginning escape sequence changes the colour of the text
 
 
-def MakeUser():
+def MakeUser(user = ''):
     '''
     Creates a new user
     '''
     pwdPassed = False
     with open('Users.csv', 'a', newline='', encoding="UTF8") as file:  # This opens up the Users file in append mode
         writer = csv.writer(file)  # Assigns a writer object to an variable
-        user = tInput("\033[0;37;40mPlease make a new user to continue.\nFirst, enter a username: ")
+        tPrint("\033[0;37;40mPlease make a new user to continue.")
+        if len(user) == 0:
+            user = tInput("\033[0;37;40mFirst, enter a username: ")
+        else:
+            tPrint(f"The chosen username is: {user}")
         while not pwdPassed:  # While the passwords do not match
             password = tInput("\033[0;37;40mPlease enter a new password: ")
             pwdCheck = tInput("Please re-enter the password: ")
@@ -35,15 +43,17 @@ def MakeUser():
                 tPrint("\033[0;37;40mThe passwords do not match.")
             else:
                 pwdPassed = True
+        global userMode
+        userMode = True
         tPrint("\033[0;37;40mNew User Made.")
         time.sleep(1)
         data = ['0', user, password]  # Assigns the default score, the user and the password to a variable
         writer.writerow(data)  # Writes data to a new row in User.csv
 
 
-def Authentication():
+def Authentication(bypassGuest = False):
     '''
-    Checks that the user is registered and if not, registers them
+    Checks that the user is registered and if not, registers them if they do not want to be a guest
     '''
     with open('Users.csv', newline='', encoding="UTF8") as file:  # This opens up the Users file in read mode
         reader = csv.reader(file)  # Assigns the file reader to a variable
@@ -52,7 +62,15 @@ def Authentication():
         fails = 0
         global line
         global row
+        global userMode
         while not passed:  # While not signed in
+            if not bypassGuest:
+                guestCheck = tInput("Would you like to sign in? (Y/N): ")
+                if guestCheck[0].lower() != 'y':
+                    tPrint("You have signed in as guest, where your highscores will not be saved.")
+                    userMode = False
+                    time.sleep(0.5)
+                    return
             user = tInput("\033[0;37;40mPlease enter your username: ")
             for row in reader:
                 if user == row[1]:  # Checks if the username matches the user in the row
@@ -60,7 +78,7 @@ def Authentication():
                     break
                 line += 1
             if passed != True:  # If the username doesn't match any of the users
-                MakeUser()  # Makes a new user
+                MakeUser(user)  # Makes a new user
                 pwdPassed = True
                 passed = True
             while not pwdPassed:
@@ -74,6 +92,7 @@ def Authentication():
                         hint = FirstLetter(row[2])
                         pwLen = len(row[2])
                         tPrint("\033[1;35;40mPassword Hint:\nFirst Character: " + hint + "\nLength of password: " + str(pwLen))
+            userMode = True
             tPrint("\033[1;32;40mAuthenication Passed.")
             time.sleep(1)
             os.system("cls||clear")  # Clears the screen
@@ -167,17 +186,23 @@ def GenreSelection(changeSelection = 1):
     Allows the selected genre to be changed
     '''
     global genre
+    global randomFlag
+    passed = False
     genreList = ["Disco.txt", "Electronic Dance.txt", "Folk.txt", "Indie.txt", "Metal.txt", "Pop.txt", "Punk.txt", "Rap.txt", "Rock.txt", "Video Game.txt"]
     if changeSelection == 0:
+        if randomFlag:
+            choice = random.randint(1, len(genreList))
+            genre = genreList[choice - 1]
+            passed = True
         return genre
-    passed = False
     while not passed:
-        choice = int(input("Your options are:\n1. Disco\n2. Electronic Dance\n3. Folk\n4. Indie\n5. Metal\n6. Pop\n7. Punk\n8. Rap\n9. Rock\n10. Video Game\n0. Random:"))
+        choice = int(input("Your options are:\n1. Disco\n2. Electronic Dance\n3. Folk\n4. Indie\n5. Metal\n6. Pop\n7. Punk\n8. Rap\n9. Rock\n10. Video Game\n0. Random: "))
         if choice > len(genreList) or choice < 0:
             print("That was not an option.")
             continue
         elif choice == 0:
-            choice = random.randint(1, len(genreList) + 1)
+            randomFlag = True
+            choice = random.randint(1, len(genreList))
         genre = genreList[choice - 1]
         passed = True
     return genre
@@ -254,7 +279,11 @@ def AskSong():
         if chances == 0:
             tPrint("\033[1;31;40mGame Over")
             tPrint("\033[0;37;40mThe song was " + song)
-            Save()
+            if not userMode:
+                disableGuest = tInput("It seems you are a guest; would you like to sign in to save your scores? (Y/N): ")
+                if disableGuest[0].lower() == 'y':
+                    Authentication(True)
+                    Save()
             HighScores()
             points = 0
             Replay()
@@ -323,4 +352,4 @@ def InsertionSort(list):
         list[pos + 1] = save
 
 if __name__ == "__main__":
-    SongSelection
+    SongSelection()
