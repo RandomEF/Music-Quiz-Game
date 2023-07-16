@@ -4,5 +4,5 @@ A game where the first letter of each word in a song is presented, along with th
 
 --NEW--
 
-Added the feature to select a genre, or go random!
-Guest mode added
+- Added the feature to select a genre, or go random!
+- Guest mode added
